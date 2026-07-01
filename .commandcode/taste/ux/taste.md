@@ -26,6 +26,6 @@
 - Use a semantic color system where each color carries meaning (Rest, Preparation, Action, Waiting, Maintenance, Attention, Archive) — never use color as decoration; every color choice must communicate a state or purpose. Confidence: 0.70
 - Motion should communicate weight, completion, movement, and continuity; nothing should appear or disappear instantly — objects should move, cards rearrange, railways animate, bottom sheets feel attached to the finger. Confidence: 0.75
 - Use a handwritten-style font for the app's typography. Confidence: 0.70
-- On light-colored card surfaces, text must be dark (high contrast) for readability. Confidence: 0.80
+- All text everywhere must be dark (high contrast) for readability; use a single `--foreground` variable globally rather than surgical per-component fixes on cards. Confidence: 0.85
 - Define the product philosophy as 'an operating system for reducing physical and mental entropy' — every feature, screen, and interaction should be evaluated by whether it reduces entropy (mental load, clutter, cognitive overhead) or merely manages it. Confidence: 0.85
 - Design for neurodivergent users (ADHD, fidget-prone) who struggle with physical/mental entropy; prioritize reducing cognitive load, providing clear closure for every action, and creating calm momentum over information density or flexibility. Confidence: 0.65
