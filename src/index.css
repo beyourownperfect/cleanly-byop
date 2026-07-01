@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ─── Dark canvas with light elevated surfaces ────────── */
+    --background: 220 15% 12%;       /* deep slate — page bg */
+    --foreground: 220 10% 88%;       /* light gray — text on dark bg */
+
+    /* Card surfaces: warm light tones (not white) */
+    --card: 40 18% 90%;              /* warm cream */
+    --card-foreground: 30 20% 14%;   /* rich charcoal — text on cards */
+
+    --popover: 40 18% 90%;
+    --popover-foreground: 30 20% 14%;
+
+    /* Primary: warm terracotta — substantial, not clinical */
+    --primary: 15 45% 52%;
+    --primary-foreground: 15 30% 92%;
+
+    /* Secondary: warm slate */
+    --secondary: 200 12% 40%;
+    --secondary-foreground: 40 18% 90%;
+
+    /* Muted: light warm gray for subtle surfaces */
+    --muted: 40 12% 82%;
+    --muted-foreground: 40 8% 40%;
+
+    /* Accent: warm olive */
+    --accent: 110 18% 42%;
+    --accent-foreground: 40 18% 90%;
+
+    /* Destructive: warm rust */
+    --destructive: 10 45% 50%;
+    --destructive-foreground: 15 30% 92%;
+
+    --border: 40 12% 78%;
+    --input: 40 12% 78%;
+    --ring: 15 45% 52%;
+
+    --radius: 0.75rem;
+
+    /* ─── Typography ──────────────────────────────────── */
+    --font-weight-heading: 700;
+    --font-weight-body: 500;
+
+    /* ─── Shadows ────────────────────────────────────── */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-xl: 0 12px 36px rgba(0, 0, 0, 0.4);
+    --shadow-button: 0 4px 16px hsla(15, 45%, 52%, 0.35);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    /* ─── Progress bar ────────────────────────────────── */
+    --progress-track: 40 12% 72%;
+    --progress-active: 15 45% 52%;
+    --progress-completed: 110 18% 42%;
+    --progress-future: 40 12% 72%;
+
+    /* ─── Status dot colors ──────────────────────────── */
+    --status-waiting: 10 50% 50%;    /* rust — needs attention */
+    --status-progress: 40 75% 50%;   /* amber — in progress */
+    --status-rest: 120 22% 42%;      /* olive — at rest */
+
+    /* ─── Atmosphere (subtle warm shift) ─────────────── */
+    --atmos-hue: 220;
+    --atmos-saturation: 15%;
+    --atmos-lightness: 12%;
+
+    /* ─── Spacing ────────────────────────────────────── */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(circle, hsl(220 8% 18%) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: var(--font-weight-body);
+    transition: background-color 800ms ease;
+    overscroll-behavior: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-weight-heading);
+  }
+
+  input, textarea, button {
+    font-family: inherit;
+  }
+
+  @media screen and (max-width: 768px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@layer utilities {
+  .shadow-card { box-shadow: var(--shadow-card); }
+  .shadow-button { box-shadow: var(--shadow-button); }
+}
