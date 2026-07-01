@@ -30,7 +30,10 @@ export default function HomePage() {
   const [sessionRoutineMap, setSessionRoutineMap] = useState<Map<string, Routine>>(new Map());
 
   // Reactively fetch routines and active session
-  const routines = useLiveQuery(() => db.routines.sortBy('sortOrder')) ?? [];
+  const routines: Routine[] = useLiveQuery(
+    () => db.routines.orderBy('sortOrder').toArray(),
+  ) ?? [];
+
   const activeSession = useLiveQuery(async () => {
     const session = await getActiveSession();
     if (session) {
