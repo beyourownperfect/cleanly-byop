@@ -4,7 +4,7 @@ import { db } from '../../shared/db/dexie';
 import { completeStep, cancelSession, getSessionProgress, getCurrentStep } from '../engine';
 import { playTap, playComplete, playRailAdvance, playPeace, playMomentComplete } from '../../shared/lib/sounds';
 import { motion, AnimatePresence } from 'motion/react';
-import type { Routine, RoutineSession } from '../../shared/types/domain';
+import type { Routine, RoutineSession, RoutineSessionStep, LifecycleMoment } from '../../shared/types/domain';
 
 interface RoutineSessionViewProps {
   session: RoutineSession;
@@ -20,8 +20,8 @@ export default function RoutineSessionView({ session, routine, onComplete, onCan
 
   // Reactively watch for session/step changes
   const currentSession = useLiveQuery(() => db.routineSessions.get(session.id)) ?? session;
-  const sessionSteps = useLiveQuery(
-    () => db.routineSessionSteps.where('sessionId').equals(session.id).sortBy('createdAt'),
+  const sessionSteps: RoutineSessionStep[] = useLiveQuery(
+    () => db.routineSessionSteps.where('sessionId').equals(session.id).toArray(),
     [session.id],
   ) ?? [];
   const progress = useLiveQuery(() => getSessionProgress(session.id), [session.id])
@@ -32,7 +32,7 @@ export default function RoutineSessionView({ session, routine, onComplete, onCan
 
   useEffect(() => {
     if (currentSession.status === 'active') {
-      getCurrentStep(currentSession).then(setStepData);
+      getCurrentStep(currentSession.id).then(setStepData);
     }
   }, [currentSession, sessionSteps]);
 
@@ -59,7 +59,7 @@ export default function RoutineSessionView({ session, routine, onComplete, onCan
       setStepData(null);
       // Re-fetch step data after a brief delay for animation
       setTimeout(() => {
-        if (updatedSession) getCurrentStep(updatedSession).then(setStepData);
+        if (updatedSession) getCurrentStep(updatedSession.id).then(setStepData);
         setAnimating(false);
       }, 300);
     }
@@ -77,13 +77,14 @@ export default function RoutineSessionView({ session, routine, onComplete, onCan
 
   // All lifecycle moments for the current object (for the railway)
   const currentObjectId = stepData?.object?.id;
-  const lifecycleMoments = useLiveQuery(
-    () => currentObjectId
-      ? db.objects.get(currentObjectId).then((obj) => {
-          if (!obj) return [];
-          return db.moments.where('lifecycleId').equals(obj.lifecycleId).sortBy('sortOrder');
-        })
-      : Promise.resolve([]),
+  const lifecycleMoments: LifecycleMoment[] = useLiveQuery(
+    async () => {
+      if (!currentObjectId) return [];
+      const obj = await db.objects.get(currentObjectId);
+      if (!obj) return [];
+      const all = await db.moments.where('lifecycleId').equals(obj.lifecycleId).toArray();
+      return all.sort((a, b) => a.sortOrder - b.sortOrder);
+    },
     [currentObjectId],
   ) ?? [];
 

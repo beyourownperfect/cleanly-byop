@@ -1,6 +1,14 @@
 import { db } from '../shared/db/dexie';
 import { generateId, nowISO } from '../shared/lib/id';
-import type { RoutineSession, RoutineSessionStep, RoutineStep, Object, LifecycleMoment, Transition } from '../shared/types/domain';
+import type { RoutineSession, RoutineSessionStep } from '../shared/types/domain';
+
+function sorted<T extends { sortOrder: number }>(arr: T[]): T[] {
+  return arr.sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+function byCreatedAt<T extends { createdAt: string }>(arr: T[]): T[] {
+  return arr.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+}
 
 /**
  * Start a new session for the given routine.
@@ -8,48 +16,37 @@ import type { RoutineSession, RoutineSessionStep, RoutineStep, Object, Lifecycle
  * and which can be skipped (already done).
  */
 export async function startSession(routineId: string): Promise<RoutineSession | null> {
-  const steps = await db.routineSteps
-    .where('routineId').equals(routineId)
-    .sortBy('sortOrder');
-
+  const steps = sorted(await db.routineSteps.where('routineId').equals(routineId).toArray());
   if (steps.length === 0) return null;
 
   const now = nowISO();
   const sessionId = generateId();
 
-  // Check each step's object state
-  const sessionSteps: Omit<RoutineSessionStep, 'status'>[] = [];
   const statuses: RoutineSessionStep['status'][] = [];
+  const sessionStepRecords: Omit<RoutineSessionStep, 'status'>[] = [];
 
   for (const step of steps) {
     const obj = await db.objects.get(step.objectId);
+    const base = { id: generateId(), sessionId, routineStepId: step.id, objectId: step.objectId, createdAt: now };
+    sessionStepRecords.push(base);
     if (!obj) {
-      sessionSteps.push({ id: generateId(), sessionId, routineStepId: step.id, objectId: step.objectId, createdAt: now });
       statuses.push('blocked');
-      continue;
-    }
-    if (obj.currentMomentId === step.toMomentId) {
-      sessionSteps.push({ id: generateId(), sessionId, routineStepId: step.id, objectId: step.objectId, createdAt: now });
+    } else if (obj.currentMomentId === step.toMomentId) {
       statuses.push('skipped');
     } else {
-      sessionSteps.push({ id: generateId(), sessionId, routineStepId: step.id, objectId: step.objectId, createdAt: now });
       statuses.push('pending');
     }
   }
 
-  // Mark first pending as ready
   const firstPending = statuses.findIndex((s) => s === 'pending');
-  if (firstPending >= 0) {
-    statuses[firstPending] = 'ready';
-  }
+  if (firstPending >= 0) statuses[firstPending] = 'ready';
 
-  // Create session
+  const allSkipped = statuses.every((s) => s === 'skipped' || s === 'blocked');
+
   const session: RoutineSession = {
     id: sessionId,
     routineId,
-    status: statuses.every((s) => s === 'skipped' || s === 'blocked')
-      ? 'completed'
-      : 'active',
+    status: allSkipped ? 'completed' : 'active',
     currentStepOrder: firstPending >= 0 ? firstPending : 0,
     startedAt: now,
     createdAt: now,
@@ -59,10 +56,7 @@ export async function startSession(routineId: string): Promise<RoutineSession | 
   await db.transaction('rw', db.routineSessions, db.routineSessionSteps, () => {
     db.routineSessions.add(session);
     db.routineSessionSteps.bulkAdd(
-      sessionSteps.map((s, i) => ({
-        ...s,
-        status: statuses[i],
-      })),
+      sessionStepRecords.map((s, i) => ({ ...s, status: statuses[i] })),
     );
   });
 
@@ -72,10 +66,13 @@ export async function startSession(routineId: string): Promise<RoutineSession | 
 /**
  * Get the currently ready step for a session, with its resolved transition.
  */
-export async function getCurrentStep(session: RoutineSession) {
-  const sessionSteps = await db.routineSessionSteps
-    .where('sessionId').equals(session.id)
-    .sortBy('createdAt');
+export async function getCurrentStep(sessionId: string) {
+  const session = await db.routineSessions.get(sessionId);
+  if (!session) return null;
+
+  const sessionSteps = byCreatedAt(
+    await db.routineSessionSteps.where('sessionId').equals(session.id).toArray(),
+  );
 
   const readyStep = sessionSteps.find((s) => s.status === 'ready');
   if (!readyStep) return null;
@@ -86,10 +83,7 @@ export async function getCurrentStep(session: RoutineSession) {
   const obj = await db.objects.get(routineStep.objectId);
   if (!obj) return null;
 
-  const transitions = await db.transitions
-    .where('lifecycleId').equals(obj.lifecycleId)
-    .toArray();
-
+  const transitions = await db.transitions.where('lifecycleId').equals(obj.lifecycleId).toArray();
   const transition = transitions.find(
     (t) => t.fromMomentId === obj.currentMomentId && t.toMomentId === routineStep.toMomentId,
   ) ?? null;
@@ -112,10 +106,13 @@ export async function getCurrentStep(session: RoutineSession) {
  * Complete the current ready step in a session.
  * Advances the object through its transition and logs history.
  */
-export async function completeStep(session: RoutineSession): Promise<boolean> {
-  const sessionSteps = await db.routineSessionSteps
-    .where('sessionId').equals(session.id)
-    .sortBy('createdAt');
+export async function completeStep(sessionId: string): Promise<boolean> {
+  const session = await db.routineSessions.get(sessionId);
+  if (!session) return false;
+
+  const sessionSteps = byCreatedAt(
+    await db.routineSessionSteps.where('sessionId').equals(session.id).toArray(),
+  );
 
   const readyStep = sessionSteps.find((s) => s.status === 'ready');
   if (!readyStep) return false;
@@ -126,10 +123,7 @@ export async function completeStep(session: RoutineSession): Promise<boolean> {
   const obj = await db.objects.get(routineStep.objectId);
   if (!obj) return false;
 
-  const transitions = await db.transitions
-    .where('lifecycleId').equals(obj.lifecycleId)
-    .toArray();
-
+  const transitions = await db.transitions.where('lifecycleId').equals(obj.lifecycleId).toArray();
   const transition = transitions.find(
     (t) => t.fromMomentId === obj.currentMomentId && t.toMomentId === routineStep.toMomentId,
   );
@@ -137,13 +131,11 @@ export async function completeStep(session: RoutineSession): Promise<boolean> {
   const now = nowISO();
 
   await db.transaction('rw', db.objects, db.history, db.routineSessionSteps, db.routineSessions, async () => {
-    // Update object state
     await db.objects.update(obj.id, {
       currentMomentId: routineStep.toMomentId,
       updatedAt: now,
     });
 
-    // Append history event
     await db.history.add({
       id: generateId(),
       objectId: obj.id,
@@ -156,16 +148,14 @@ export async function completeStep(session: RoutineSession): Promise<boolean> {
       note: routineStep.label,
     });
 
-    // Mark this step completed
     await db.routineSessionSteps.update(readyStep.id, {
       status: 'completed',
       completedAt: now,
     });
 
-    // Find next pending step
-    const updatedSteps = await db.routineSessionSteps
-      .where('sessionId').equals(session.id)
-      .sortBy('createdAt');
+    const updatedSteps = byCreatedAt(
+      await db.routineSessionSteps.where('sessionId').equals(session.id).toArray(),
+    );
 
     const nextPending = updatedSteps.find((s) => s.status === 'pending');
     if (nextPending) {
@@ -176,7 +166,6 @@ export async function completeStep(session: RoutineSession): Promise<boolean> {
         updatedAt: now,
       });
     } else {
-      // All done
       await db.routineSessions.update(session.id, {
         status: 'completed',
         currentStepOrder: updatedSteps.length - 1,
@@ -194,39 +183,26 @@ export async function completeStep(session: RoutineSession): Promise<boolean> {
  */
 export async function cancelSession(sessionId: string): Promise<void> {
   const now = nowISO();
-  await db.routineSessions.update(sessionId, {
-    status: 'cancelled',
-    updatedAt: now,
-  });
+  await db.routineSessions.update(sessionId, { status: 'cancelled', updatedAt: now });
 }
 
 /**
  * Get the most recent active session, if any.
  */
 export async function getActiveSession(): Promise<RoutineSession | null> {
-  const sessions = await db.routineSessions
-    .where('status').equals('active')
-    .toArray();
-
-  return sessions.sort(
-    (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
-  )[0] ?? null;
+  const sessions = await db.routineSessions.where('status').equals('active').toArray();
+  return sessions.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())[0] ?? null;
 }
 
 /**
  * Check if a routine has any actionable steps (non-skipped).
  */
 export async function getRoutineActionableStepCount(routineId: string): Promise<number> {
-  const steps = await db.routineSteps
-    .where('routineId').equals(routineId)
-    .sortBy('sortOrder');
-
+  const steps = sorted(await db.routineSteps.where('routineId').equals(routineId).toArray());
   let count = 0;
   for (const step of steps) {
     const obj = await db.objects.get(step.objectId);
-    if (obj && obj.currentMomentId !== step.toMomentId) {
-      count++;
-    }
+    if (obj && obj.currentMomentId !== step.toMomentId) count++;
   }
   return count;
 }
@@ -235,19 +211,15 @@ export async function getRoutineActionableStepCount(routineId: string): Promise<
  * Get session step details for a session.
  */
 export async function getSessionSteps(sessionId: string): Promise<RoutineSessionStep[]> {
-  return db.routineSessionSteps
-    .where('sessionId').equals(sessionId)
-    .sortBy('createdAt');
+  const steps = await db.routineSessionSteps.where('sessionId').equals(sessionId).toArray();
+  return byCreatedAt(steps);
 }
 
 /**
  * Get the total and completed step count for display.
  */
-export async function getSessionProgress(session: RoutineSession): Promise<{ total: number; completed: number; skipped: number }> {
-  const steps = await db.routineSessionSteps
-    .where('sessionId').equals(session.id)
-    .toArray();
-
+export async function getSessionProgress(sessionId: string): Promise<{ total: number; completed: number; skipped: number }> {
+  const steps = await db.routineSessionSteps.where('sessionId').equals(sessionId).toArray();
   return {
     total: steps.length,
     completed: steps.filter((s) => s.status === 'completed').length,

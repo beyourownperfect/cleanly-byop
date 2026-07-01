@@ -5,6 +5,7 @@ import { generateId, nowISO } from '../shared/lib/id';
 import { playTap, playComplete } from '../shared/lib/sounds';
 import { motion, AnimatePresence } from 'motion/react';
 import HelpGuide from '../shared/components/HelpGuide';
+import type { Routine } from '../shared/types/domain';
 
 type View = 'menu' | 'objects' | 'lifecycles' | 'spaces' | 'zones' | 'data' | 'routines';
 
@@ -99,7 +100,9 @@ function WorkshopMenu({ onSelect }: { onSelect: (v: View) => void }) {
 // ─── Routines ────────────────────────────────────────────────
 
 function RoutinesView({ onBack }: { onBack: () => void }) {
-  const routines = useLiveQuery(() => db.routines.sortBy('sortOrder')) ?? [];
+  const routines: Routine[] = useLiveQuery(
+    () => db.routines.orderBy('sortOrder').toArray(),
+  ) ?? [];
   const steps = useLiveQuery(() => db.routineSteps.toArray()) ?? [];
   const objects = useLiveQuery(() => db.objects.toArray()) ?? [];
   const moments = useLiveQuery(() => db.moments.toArray()) ?? [];
