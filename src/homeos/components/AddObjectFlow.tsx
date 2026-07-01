@@ -37,7 +37,7 @@ export default function AddObjectFlow({ onDone }: Props) {
     playComplete();
 
     const defaultLifecycle = lifecycles[0]!;
-    const defaultMoments = await db.moments.where('lifecycleId').equals(defaultLifecycle.id).sortBy('sortOrder');
+    const defaultMoments = (await db.moments.where('lifecycleId').equals(defaultLifecycle.id).toArray()).sort((a, b) => a.sortOrder - b.sortOrder);
     const firstMoment = defaultMoments[0]!;
     const now = nowISO();
     const objectId = generateId();

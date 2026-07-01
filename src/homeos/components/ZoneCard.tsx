@@ -25,13 +25,11 @@ export default function ZoneCard({ zone, storageSpaces, objects, moments, onSele
 
   return (
     <div
-      className="rounded-2xl border transition-all duration-500"
+      className="rounded-2xl transition-all duration-500"
       style={{
-        backgroundColor: 'var(--bg-card)',
-        borderColor: outOfPlaceCount > 0
-          ? 'hsl(var(--atmos-hue), calc(var(--atmos-saturation) + 15%), 82%)'
-          : 'transparent',
-        boxShadow: outOfPlaceCount > 0 ? 'var(--depth-2)' : 'var(--depth-1)',
+        backgroundColor: 'hsl(var(--card))',
+        boxShadow: outOfPlaceCount > 0 ? 'var(--shadow-md)' : 'var(--shadow-sm)',
+        border: outOfPlaceCount > 0 ? '1px solid hsl(var(--status-progress) / 0.3)' : '1px solid transparent',
       }}
     >
       <button
@@ -40,11 +38,11 @@ export default function ZoneCard({ zone, storageSpaces, objects, moments, onSele
       >
         <span className="text-2xl">{zone.icon || '📁'}</span>
         <div className="flex-1">
-          <div className="font-medium" style={{ color: 'hsl(var(--atmos-hue), 20%, 25%)' }}>
+          <div className="font-medium" style={{ color: 'hsl(var(--foreground))' }}>
             {zone.name}
           </div>
           {zoneObjects.length > 0 && (
-            <div className="text-xs" style={{ color: 'hsl(var(--atmos-hue), 10%, 50%)' }}>
+            <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
               {zoneObjects.length} object{zoneObjects.length !== 1 ? 's' : ''}
               {outOfPlaceCount > 0 && ` · ${outOfPlaceCount} out of place`}
             </div>
@@ -52,14 +50,17 @@ export default function ZoneCard({ zone, storageSpaces, objects, moments, onSele
         </div>
         <span
           className="text-lg transition-transform duration-300"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          style={{
+            transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+            color: 'hsl(var(--muted-foreground))',
+          }}
         >
           ›
         </span>
       </button>
 
       {expanded && (
-        <div className="border-t px-4 py-2" style={{ borderColor: 'hsl(var(--atmos-hue), calc(var(--atmos-saturation) + 10%), 88%)' }}>
+        <div className="border-t px-4 py-2" style={{ borderColor: 'hsl(var(--border))' }}>
           <StorageSpaceTree
             spaces={topSpaces}
             allSpaces={storageSpaces}

@@ -57,7 +57,7 @@ export default function HomePage() {
 
   // Refresh actionable counts when routines change
   const refreshCounts = useCallback(async () => {
-    const results = await Promise.all(routines.map(async (r) => {
+    const results = await Promise.all(routines.map(async (r: Routine) => {
       const count = await getRoutineActionableStepCount(r.id);
       return [r.id, count] as const;
     }));

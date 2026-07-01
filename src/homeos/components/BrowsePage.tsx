@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useLiveQuery } from '../../shared/db/hooks';
 import { db } from '../../shared/db/dexie';
 import { motion } from 'motion/react';
@@ -114,7 +114,7 @@ export default function BrowsePage() {
   );
 }
 
-function BrowseSpaceRow({
+const BrowseSpaceRow = memo(function BrowseSpaceRow({
   space,
   objects,
   moments,
@@ -164,9 +164,9 @@ function BrowseSpaceRow({
               style={{
                 color: moment
                   ? moment.atmosphereWeight >= 0.5
-                    ? 'hsl(var(--rail-completed))'
+                    ? 'hsl(var(--progress-completed))'
                     : moment.atmosphereWeight < 0
-                      ? 'hsl(var(--morph-waiting-accent))'
+                      ? 'hsl(var(--status-waiting))'
                       : 'hsl(var(--muted-foreground))'
                   : 'hsl(var(--muted-foreground))',
               }}
@@ -178,4 +178,4 @@ function BrowseSpaceRow({
       })}
     </div>
   );
-}
+});

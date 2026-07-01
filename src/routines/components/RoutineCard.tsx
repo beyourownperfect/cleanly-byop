@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'motion/react';
 import type { Routine } from '../../shared/types/domain';
 import { playTap } from '../../shared/lib/sounds';
@@ -8,7 +9,7 @@ interface RoutineCardProps {
   actionableCount?: number;
 }
 
-export default function RoutineCard({ routine, onStart, actionableCount }: RoutineCardProps) {
+function RoutineCard({ routine, onStart, actionableCount }: RoutineCardProps) {
   const hasActionable = actionableCount !== undefined ? actionableCount > 0 : true;
 
   return (
@@ -91,3 +92,5 @@ export default function RoutineCard({ routine, onStart, actionableCount }: Routi
     </motion.div>
   );
 }
+
+export default memo(RoutineCard);

@@ -62,7 +62,7 @@ function StorageSpaceNode({
             className="text-xs transition-transform duration-200"
             style={{
               transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-              color: 'hsl(var(--atmos-hue), 10%, 55%)',
+              color: 'hsl(var(--muted-foreground))',
             }}
           >
             ›
@@ -70,11 +70,11 @@ function StorageSpaceNode({
         )}
         {!hasChildren && <span className="w-3" />}
         <span>{space.icon || '📁'}</span>
-        <span className="text-sm" style={{ color: 'hsl(var(--atmos-hue), 15%, 35%)' }}>
+        <span className="text-sm" style={{ color: 'hsl(var(--foreground))' }}>
           {space.name}
         </span>
         {spaceObjects.length > 0 && (
-          <span className="text-xs" style={{ color: 'hsl(var(--atmos-hue), 10%, 55%)' }}>
+          <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {spaceObjects.length}
           </span>
         )}
