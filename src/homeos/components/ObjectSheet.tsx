@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../../shared/db/dexie';
 import { generateId, nowISO } from '../../shared/lib/id';
 import { playTap, playComplete } from '../../shared/lib/sounds';
-import type { Object as HomeOSObject, Transition } from '../../shared/types/domain';
+import type { Object as HomeOSObject } from '../../shared/types/domain';
 
 interface Props {
   object: HomeOSObject;
@@ -213,16 +213,14 @@ export default function ObjectSheet({ object, onClose }: Props) {
                       <button
                         onClick={() => canAdvance && handleAdvance(m.id)}
                         disabled={!canAdvance}
-                        className={`shrink-0 flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all ${
-                          isCurrent ? 'ring-2' : ''
-                        }`}
+                        className={`shrink-0 flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all`}
                         style={{
                           backgroundColor: isCurrent
                             ? 'hsl(var(--primary) / 0.15)'
                             : isPast
                               ? 'hsl(var(--muted))'
                               : 'hsl(var(--muted) / 0.5)',
-                          ringColor: isCurrent ? 'hsl(var(--primary))' : undefined,
+                          boxShadow: isCurrent ? '0 0 0 2px hsl(var(--primary))' : 'none',
                           opacity: isCurrent || isPast ? 1 : 0.5,
                           cursor: canAdvance ? 'pointer' : 'default',
                         }}
