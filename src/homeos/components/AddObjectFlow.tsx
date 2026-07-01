@@ -106,7 +106,7 @@ export default function AddObjectFlow({ onDone }: Props) {
             exit={{ opacity: 0, x: -40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 260 }}
           >
-            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
               What should I call you?
             </h2>
 
@@ -118,7 +118,7 @@ export default function AddObjectFlow({ onDone }: Props) {
                   className="flex h-11 w-11 items-center justify-center rounded-xl text-lg transition-all"
                   style={{
                     backgroundColor: emoji === e ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
-                    color: emoji === e ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                    color: emoji === e ? 'hsl(var(--primary-foreground))' : 'hsl(var(--card-foreground))',
                     transform: emoji === e ? 'scale(1.15)' : 'scale(1)',
                   }}
                 >
@@ -134,7 +134,7 @@ export default function AddObjectFlow({ onDone }: Props) {
               className="w-full rounded-2xl px-5 py-4 text-center text-xl outline-none"
               style={{
                 backgroundColor: 'hsl(var(--muted))',
-                color: 'hsl(var(--foreground))',
+                color: 'hsl(var(--card-foreground))',
               }}
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && name.trim() && (setStep(1), playTap())}
@@ -161,7 +161,7 @@ export default function AddObjectFlow({ onDone }: Props) {
             exit={{ opacity: 0, x: -40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 260 }}
           >
-            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
               Where do you belong?
             </h2>
 
@@ -187,7 +187,7 @@ export default function AddObjectFlow({ onDone }: Props) {
                         className="flex w-full items-center gap-3 rounded-2xl px-4 py-4 text-left transition-all"
                         style={{
                           backgroundColor: spaceId === s.id ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
-                          color: spaceId === s.id ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                          color: spaceId === s.id ? 'hsl(var(--primary-foreground))' : 'hsl(var(--card-foreground))',
                         }}
                       >
                         <span className="text-xl">{s.icon || '📁'}</span>

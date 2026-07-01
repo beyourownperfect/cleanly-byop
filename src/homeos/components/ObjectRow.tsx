@@ -19,7 +19,7 @@ function ObjectRow({ object, moments, depth, onClick }: Props) {
       style={{ paddingLeft: `${0.75 + depth * 1}rem` }}
     >
       <span className="text-sm">{object.icon || '📄'}</span>
-      <span className="flex-1 text-sm" style={{ color: 'hsl(var(--foreground))' }}>
+      <span className="flex-1 text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>
         {object.name}
       </span>
       {currentMoment && (
@@ -31,7 +31,7 @@ function ObjectRow({ object, moments, depth, onClick }: Props) {
               : 'hsl(var(--status-progress) / 0.15)',
             color: isHome
               ? 'hsl(var(--muted-foreground))'
-              : 'hsl(var(--foreground))',
+              : 'hsl(var(--card-foreground))',
           }}
         >
           {currentMoment.icon} {currentMoment.name}

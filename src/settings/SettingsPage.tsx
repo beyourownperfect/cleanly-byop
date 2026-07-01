@@ -196,7 +196,7 @@ function RoutinesView({ onBack }: { onBack: () => void }) {
           onChange={(e) => setNewName(e.target.value)}
           placeholder="New routine name"
           className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
-          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
+          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))' }}
           onKeyDown={(e) => e.key === 'Enter' && addRoutine()}
         />
         <button onClick={addRoutine} className="rounded-xl px-4 py-2.5 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
@@ -240,7 +240,7 @@ function RoutinesView({ onBack }: { onBack: () => void }) {
                   />
                 ) : (
                   <div className="flex-1">
-                    <div className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>{r.name}</div>
+                    <div className="text-sm font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{r.name}</div>
                     <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       {routineSteps.length} steps
                       {r.estimatedDuration && ` · ${r.estimatedDuration} min`}
@@ -268,7 +268,7 @@ function RoutinesView({ onBack }: { onBack: () => void }) {
                           <button onClick={() => moveStep(s.id, 1)} disabled={i === routineSteps.length - 1} className="text-[9px] leading-none disabled:opacity-20" style={{ color: 'hsl(var(--muted-foreground))' }}>▼</button>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-xs font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>
+                          <div className="text-xs font-medium truncate" style={{ color: 'hsl(var(--card-foreground))' }}>
                             {s.label}
                           </div>
                           <div className="text-[10px] truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -294,7 +294,7 @@ function RoutinesView({ onBack }: { onBack: () => void }) {
                         value={stepObject}
                         onChange={(e) => { setStepObject(e.target.value); setStepTarget(''); }}
                         className="rounded-lg border px-3 py-2 text-xs outline-none"
-                        style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
+                        style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--card-foreground))' }}
                       >
                         <option value="">Pick object</option>
                         {objects.map((o) => (
@@ -305,7 +305,7 @@ function RoutinesView({ onBack }: { onBack: () => void }) {
                         value={stepTarget}
                         onChange={(e) => setStepTarget(e.target.value)}
                         className="rounded-lg border px-3 py-2 text-xs outline-none"
-                        style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
+                        style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--card-foreground))' }}
                         disabled={!stepObject}
                       >
                         <option value="">Target moment</option>
@@ -392,7 +392,7 @@ function ObjectsView({ onBack }: { onBack: () => void }) {
         {objects.map((o) => {
           const isEditing = editing === o.id;
           return (
-            <div key={o.id} className="rounded-2xl px-4 py-3" style={{ backgroundColor: 'hsl(var(--card))', boxShadow: 'var(--shadow-sm)' }}>
+            <div key={o.id} className="card-text rounded-2xl px-4 py-3" style={{ backgroundColor: 'hsl(var(--card))', boxShadow: 'var(--shadow-sm)' }}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">{o.icon || '📄'}</span>
                 {isEditing ? (
@@ -412,7 +412,7 @@ function ObjectsView({ onBack }: { onBack: () => void }) {
                   />
                 ) : (
                   <div className="flex-1">
-                    <div className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>{o.name}</div>
+                    <div className="text-sm font-medium">{o.name}</div>
                     <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       {spaceMap.get(o.currentStorageSpaceId)?.name || '?'} · Home: {spaceMap.get(o.homeStorageSpaceId)?.name || '?'}
                     </div>
@@ -432,7 +432,7 @@ function ObjectsView({ onBack }: { onBack: () => void }) {
                     value={o.currentStorageSpaceId}
                     onChange={(e) => move(o.id, e.target.value)}
                     className="rounded-lg border-0 px-2 py-1 text-xs outline-none"
-                    style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}
+                    style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--card-foreground))' }}
                   >
                     {storageSpaces.map((s) => (
                       <option key={s.id} value={s.id}>{s.icon} {s.name}</option>
@@ -506,7 +506,7 @@ function LifecyclesView({ onBack }: { onBack: () => void }) {
           onChange={(e) => setNewName(e.target.value)}
           placeholder="New lifecycle name"
           className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
-          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
+          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))' }}
           onKeyDown={(e) => e.key === 'Enter' && addLc()}
         />
         <button onClick={addLc} className="rounded-xl px-4 py-2.5 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>
@@ -540,7 +540,7 @@ function LifecyclesView({ onBack }: { onBack: () => void }) {
                   />
                 ) : (
                   <div className="flex-1">
-                    <div className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>{lc.name}</div>
+                    <div className="text-sm font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>{lc.name}</div>
                     <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       {lcMoments.length} moments · {lcTransitions.length} transitions
                     </div>
@@ -557,7 +557,7 @@ function LifecyclesView({ onBack }: { onBack: () => void }) {
               {lcMoments.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5 pl-8">
                   {lcMoments.map((m) => (
-                    <span key={m.id} className="rounded-lg px-2 py-0.5 text-xs" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}>
+                    <span key={m.id} className="rounded-lg px-2 py-0.5 text-xs" style={{ backgroundColor: 'hsl(var(--muted))', color: 'hsl(var(--card-foreground))' }}>
                       {m.icon} {m.name}
                     </span>
                   ))}
@@ -616,14 +616,14 @@ function SpacesView({ onBack }: { onBack: () => void }) {
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Name"
           className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
-          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
+          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))' }}
           onKeyDown={(e) => e.key === 'Enter' && add()}
         />
         <select
           value={newZone}
           onChange={(e) => setNewZone(e.target.value)}
           className="rounded-xl border px-3 py-2.5 text-sm outline-none"
-          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
+          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))' }}
         >
           <option value="">No room</option>
           {zones.map((z) => <option key={z.id} value={z.id}>{z.name}</option>)}
@@ -636,7 +636,7 @@ function SpacesView({ onBack }: { onBack: () => void }) {
           <div key={s.id} className="flex items-center gap-3 rounded-2xl px-4 py-3" style={{ backgroundColor: 'hsl(var(--card))', boxShadow: 'var(--shadow-sm)' }}>
             <span className="text-lg">{s.icon || '📦'}</span>
             <div className="flex-1">
-              <div className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>{s.name}</div>
+              <div className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{s.name}</div>
               {s.zoneId && <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{zoneMap.get(s.zoneId)?.name || '?'}</div>}
             </div>
             <button onClick={() => remove(s.id)} className="rounded-lg px-2.5 py-1 text-xs" style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}>✕</button>
@@ -684,7 +684,7 @@ function ZonesView({ onBack }: { onBack: () => void }) {
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Room name"
           className="flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none"
-          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
+          style={{ borderColor: 'hsl(var(--border))', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))' }}
           onKeyDown={(e) => e.key === 'Enter' && add()}
         />
         <button onClick={add} className="rounded-xl px-4 py-2.5 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>+</button>
@@ -693,7 +693,7 @@ function ZonesView({ onBack }: { onBack: () => void }) {
         {zones.map((z) => (
           <div key={z.id} className="flex items-center gap-3 rounded-2xl px-4 py-3" style={{ backgroundColor: 'hsl(var(--card))', boxShadow: 'var(--shadow-sm)' }}>
             <span className="text-lg">{z.icon || '🏠'}</span>
-            <span className="flex-1 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>{z.name}</span>
+            <span className="flex-1 text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>{z.name}</span>
             <button onClick={() => remove(z.id)} className="rounded-lg px-2.5 py-1 text-xs" style={{ backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }}>✕</button>
           </div>
         ))}
@@ -760,10 +760,10 @@ function DataView({ onBack }: { onBack: () => void }) {
       <button onClick={onBack} className="self-start text-sm font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>← Workshop</button>
       <h2 className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Data</h2>
       <div className="flex gap-3">
-        <motion.button onClick={exportData} className="flex-1 rounded-2xl py-4 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))', boxShadow: 'var(--shadow-md)' }} whileTap={{ scale: 0.95 }}>
+        <motion.button onClick={exportData} className="flex-1 rounded-2xl py-4 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', boxShadow: 'var(--shadow-md)' }} whileTap={{ scale: 0.95 }}>
           💾 Export
         </motion.button>
-        <motion.button onClick={importData} className="flex-1 rounded-2xl py-4 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))', boxShadow: 'var(--shadow-md)' }} whileTap={{ scale: 0.95 }}>
+        <motion.button onClick={importData} className="flex-1 rounded-2xl py-4 text-sm font-medium" style={{ backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', boxShadow: 'var(--shadow-md)' }} whileTap={{ scale: 0.95 }}>
           📂 Import
         </motion.button>
       </div>

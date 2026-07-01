@@ -125,4 +125,5 @@
 @layer utilities {
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-button { box-shadow: var(--shadow-button); }
+  .card-text { color: hsl(var(--card-foreground)); }
 }

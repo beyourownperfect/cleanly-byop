@@ -111,7 +111,7 @@ export default function ObjectSheet({ object, onClose }: Props) {
           <div className="flex items-center gap-3 pt-2 pb-4">
             <span className="text-3xl">{object.icon || '📄'}</span>
             <div>
-              <h2 className="text-lg font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+              <h2 className="text-lg font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
                 {object.name}
               </h2>
               <div className="flex items-center gap-2 text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -129,7 +129,7 @@ export default function ObjectSheet({ object, onClose }: Props) {
           {/* Location */}
           <div className="mb-4 rounded-xl px-3 py-2" style={{ backgroundColor: 'hsl(var(--muted))' }}>
             <div className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>Location</div>
-            <div className="flex items-center gap-1 text-sm" style={{ color: 'hsl(var(--foreground))' }}>
+            <div className="flex items-center gap-1 text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>
               <span>🏠 {homeSpace?.name || 'Unknown'}</span>
               {!isHome && (
                 <>
@@ -175,7 +175,7 @@ export default function ObjectSheet({ object, onClose }: Props) {
                     className="rounded-full px-3 py-1.5 text-sm transition-colors"
                     style={{
                       backgroundColor: 'hsl(var(--muted))',
-                      color: 'hsl(var(--foreground))',
+                      color: 'hsl(var(--card-foreground))',
                     }}
                   >
                     {target?.icon} {t.label || target?.name}
@@ -216,7 +216,7 @@ export default function ObjectSheet({ object, onClose }: Props) {
                     className="rounded-full px-3 py-1.5 text-sm transition-colors"
                     style={{
                       backgroundColor: 'hsl(var(--muted))',
-                      color: 'hsl(var(--foreground))',
+                      color: 'hsl(var(--card-foreground))',
                     }}
                   >
                     {s.icon} {s.name}

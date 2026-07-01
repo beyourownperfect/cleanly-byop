@@ -70,7 +70,7 @@ function StorageSpaceNode({
         )}
         {!hasChildren && <span className="w-3" />}
         <span>{space.icon || '📁'}</span>
-        <span className="text-sm" style={{ color: 'hsl(var(--foreground))' }}>
+        <span className="text-sm" style={{ color: 'hsl(var(--card-foreground))' }}>
           {space.name}
         </span>
         {spaceObjects.length > 0 && (
