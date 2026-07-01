@@ -29,7 +29,7 @@ function RoutineCard({ routine, onStart, actionableCount }: RoutineCardProps) {
         <div className="flex-1 min-w-0">
           <h2
             className="text-2xl font-bold tracking-tight leading-tight"
-            style={{ color: 'hsl(var(--foreground))' }}
+            style={{ color: 'hsl(var(--card-foreground))' }}
           >
             {routine.name}
           </h2>

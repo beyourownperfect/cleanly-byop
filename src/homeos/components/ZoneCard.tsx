@@ -38,7 +38,7 @@ export default function ZoneCard({ zone, storageSpaces, objects, moments, onSele
       >
         <span className="text-2xl">{zone.icon || '📁'}</span>
         <div className="flex-1">
-          <div className="font-medium" style={{ color: 'hsl(var(--foreground))' }}>
+          <div className="font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>
             {zone.name}
           </div>
           {zoneObjects.length > 0 && (

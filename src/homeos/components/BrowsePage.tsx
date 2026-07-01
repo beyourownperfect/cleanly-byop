@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useLiveQuery } from '../../shared/db/hooks';
 import { db } from '../../shared/db/dexie';
 import { motion } from 'motion/react';
@@ -10,34 +10,44 @@ import HelpGuide from '../../shared/components/HelpGuide';
 export default function BrowsePage() {
   const [selectedObject, setSelectedObject] = useState<HomeOSObject | null>(null);
 
-  const zones = useLiveQuery(() => db.zones.toArray()) ?? [];
-  const storageSpaces = useLiveQuery(() => db.storageSpaces.toArray()) ?? [];
-  const objects = useLiveQuery(() => db.objects.toArray()) ?? [];
-  const moments = useLiveQuery(() => db.moments.toArray()) ?? [];
+  // Single batch query — one render when all data arrives
+  const data = useLiveQuery(() => Promise.all([
+    db.zones.toArray(),
+    db.storageSpaces.toArray(),
+    db.objects.toArray(),
+    db.moments.toArray(),
+  ])) as [typeof import('../../shared/types/domain').Zone[], StorageSpace[], HomeOSObject[], { id: string; icon?: string; name: string; atmosphereWeight: number; lifecycleId: string }[]] | undefined;
 
-  // Group storage spaces by zone
-  const zonesWithSpaces = zones
-    .map((zone) => ({
-      zone,
-      spaces: storageSpaces.filter((s) => s.zoneId === zone.id),
-    }))
-    .filter(({ spaces }) => spaces.length > 0);
+  const zones = data?.[0] ?? [];
+  const storageSpaces = data?.[1] ?? [];
+  const objects = data?.[2] ?? [];
+  const moments = data?.[3] ?? [];
 
-  // Ungrouped spaces (no zone)
-  const ungroupedSpaces = storageSpaces.filter((s) => !s.zoneId);
+  // Memoize grouped data
+  const zonesWithSpaces = useMemo(() =>
+    zones
+      .map((zone) => ({
+        zone,
+        spaces: storageSpaces.filter((s) => s.zoneId === zone.id),
+      }))
+      .filter(({ spaces }) => spaces.length > 0),
+    [zones, storageSpaces],
+  );
+
+  const ungroupedSpaces = useMemo(() =>
+    storageSpaces.filter((s) => !s.zoneId),
+    [storageSpaces],
+  );
 
   return (
     <div className="flex h-full flex-col px-5 pt-14">
       <div className="flex items-center justify-between">
-        <motion.h1
+        <h1
           className="text-3xl font-bold tracking-tight"
           style={{ color: 'hsl(var(--foreground))' }}
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
         >
           Browse
-        </motion.h1>
+        </h1>
         <HelpGuide
           tips={[
             'Explore your objects organized by room and storage space.',
@@ -48,15 +58,12 @@ export default function BrowsePage() {
           ]}
         />
       </div>
-      <motion.p
+      <p
         className="mt-1.5 text-base font-medium"
         style={{ color: 'hsl(var(--muted-foreground))' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
       >
         {objects.length} object{objects.length !== 1 ? 's' : ''} across {storageSpaces.length} space{storageSpaces.length !== 1 ? 's' : ''}
-      </motion.p>
+      </p>
 
       <div className="flex-1 overflow-y-auto pb-24 pt-5">
         <div className="flex flex-col gap-3">
@@ -72,9 +79,9 @@ export default function BrowsePage() {
           ))}
 
           {ungroupedSpaces.length > 0 && (
-            <div className="rounded-2xl border" style={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+            <div className="rounded-2xl" style={{ backgroundColor: 'hsl(var(--card))', boxShadow: 'var(--shadow-sm)' }}>
               <div className="px-4 py-3">
-                <div className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
+                <div className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>
                   Other Spaces
                 </div>
               </div>
@@ -103,7 +110,6 @@ export default function BrowsePage() {
         </div>
       </div>
 
-      {/* Object Sheet */}
       {selectedObject && (
         <ObjectSheet
           object={selectedObject}
@@ -125,17 +131,20 @@ const BrowseSpaceRow = memo(function BrowseSpaceRow({
   moments: { id: string; icon?: string; name: string; atmosphereWeight: number }[];
   onSelectObject: (obj: HomeOSObject) => void;
 }) {
-  const spaceObjects = objects.filter(
-    (o) =>
-      o.currentStorageSpaceId === space.id ||
-      o.homeStorageSpaceId === space.id,
+  const spaceObjects = useMemo(() =>
+    objects.filter(
+      (o) =>
+        o.currentStorageSpaceId === space.id ||
+        o.homeStorageSpaceId === space.id,
+    ),
+    [objects, space.id],
   );
 
   return (
     <div>
       <div className="flex items-center gap-2 rounded-lg px-2 py-1.5">
         <span>{space.icon || '📁'}</span>
-        <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
+        <span className="text-sm font-medium" style={{ color: 'hsl(var(--card-foreground))' }}>
           {space.name}
         </span>
         <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -155,7 +164,7 @@ const BrowseSpaceRow = memo(function BrowseSpaceRow({
             <span className="text-base">{obj.icon || '📄'}</span>
             <span
               className="text-sm"
-              style={{ color: 'hsl(var(--foreground))' }}
+              style={{ color: 'hsl(var(--card-foreground))' }}
             >
               {obj.name}
             </span>

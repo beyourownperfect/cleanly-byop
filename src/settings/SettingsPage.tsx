@@ -79,7 +79,7 @@ function WorkshopMenu({ onSelect }: { onSelect: (v: View) => void }) {
             whileTap={{ scale: 0.97 }}
           >
             <span className="text-2xl">{tile.icon}</span>
-            <span className="text-base font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            <span className="text-base font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
               {tile.title}
             </span>
             <span className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>

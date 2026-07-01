@@ -121,8 +121,8 @@ export default function HomePage() {
         <div className="flex items-center gap-2">
           <span className="text-lg">{getGreetingEmoji()}</span>
           <h1
-            className="text-xl font-bold tracking-tight"
-            style={{ color: 'hsl(var(--foreground))' }}
+            className="text-2xl tracking-tight"
+            style={{ color: 'hsl(var(--foreground))', fontFamily: "'Caveat', cursive", fontWeight: 600 }}
           >
             {getGreeting()}
           </h1>
