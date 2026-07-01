@@ -6,7 +6,7 @@
   :root {
     /* ─── Dark canvas with light elevated surfaces ────────── */
     --background: 220 15% 12%;       /* deep slate — page bg */
-    --foreground: 220 10% 88%;       /* light gray — text on dark bg */
+    --foreground: 30 20% 14%;       /* dark charcoal — ALL main text */
 
     /* Card surfaces: warm light tones (not white) */
     --card: 40 18% 90%;              /* warm cream */
