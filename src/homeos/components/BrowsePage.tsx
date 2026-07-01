@@ -2,7 +2,7 @@ import { memo, useMemo, useState } from 'react';
 import { useLiveQuery } from '../../shared/db/hooks';
 import { db } from '../../shared/db/dexie';
 import { motion } from 'motion/react';
-import type { Object as HomeOSObject, StorageSpace } from '../../shared/types/domain';
+import type { Object as HomeOSObject, StorageSpace, Zone, LifecycleMoment } from '../../shared/types/domain';
 import ZoneCard from './ZoneCard';
 import ObjectSheet from './ObjectSheet';
 import HelpGuide from '../../shared/components/HelpGuide';
@@ -16,7 +16,7 @@ export default function BrowsePage() {
     db.storageSpaces.toArray(),
     db.objects.toArray(),
     db.moments.toArray(),
-  ])) as [typeof import('../../shared/types/domain').Zone[], StorageSpace[], HomeOSObject[], { id: string; icon?: string; name: string; atmosphereWeight: number; lifecycleId: string }[]] | undefined;
+  ])) as [Zone[], StorageSpace[], HomeOSObject[], LifecycleMoment[]] | undefined;
 
   const zones = data?.[0] ?? [];
   const storageSpaces = data?.[1] ?? [];
@@ -128,7 +128,7 @@ const BrowseSpaceRow = memo(function BrowseSpaceRow({
 }: {
   space: StorageSpace;
   objects: HomeOSObject[];
-  moments: { id: string; icon?: string; name: string; atmosphereWeight: number }[];
+  moments: LifecycleMoment[];
   onSelectObject: (obj: HomeOSObject) => void;
 }) {
   const spaceObjects = useMemo(() =>
